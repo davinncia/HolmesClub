@@ -3,21 +3,21 @@ package com.davinciapp.holmesclub
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.Typeface
-import android.text.Editable
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.TextWatcher
-import android.text.style.DynamicDrawableSpan
 import android.text.style.ImageSpan
-import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
+import com.davinciapp.holmesclub.WritingStyle.Styles
 
 
 class TextBlocWidget(context: Context)
     : androidx.appcompat.widget.AppCompatEditText(context) {
 
+    var textStyle = Styles.MEDIUM
+
     init {
-        this.setPadding(8, 8, 8, 8)
         this.backgroundTintMode = PorterDuff.Mode.CLEAR
+        this.setStyle(Styles.MEDIUM) //Set default style
 
         /*
         placeBeginIndicator()
@@ -56,20 +56,28 @@ class TextBlocWidget(context: Context)
     //--------------------------------------------------------------------------------------------//
     //                                         S T Y L E S
     //--------------------------------------------------------------------------------------------//
-    private fun setStyle(style: WritingStyle) {
-        this.textSize = style.size
-        this.setTypeface(null, style.typeFace)
+    fun setStyle(styleType: Styles) {
+        val writingStyle =
+            when (styleType) {
+            Styles.SMALL -> {
+                textStyle = Styles.SMALL
+                WritingStyle(16F)
+            }
+            Styles.BIG -> {
+                textStyle = Styles.BIG
+                WritingStyle(24F, 16, Typeface.BOLD)
+            }
+            else -> {
+                Styles.MEDIUM
+                WritingStyle()
+            }
+        }
+
+        this.textSize = writingStyle.size
+        this.setTypeface(ResourcesCompat.getFont(context, R.font.economica), writingStyle.typeFace)
+        this.setPadding(8, writingStyle.padding, 8, writingStyle.padding)
     }
 
-    fun styleDefault() {
-        setStyle(WritingStyle(18F, Typeface.NORMAL))
-    }
-    fun styleBig() {
-        setStyle(WritingStyle(21F, Typeface.BOLD))
-    }
-    fun styleSmall() {
-        setStyle(WritingStyle(16F, Typeface.ITALIC))
-    }
 
     //Always starts with an invisible space -> help us know when to delete the edit text
     private fun placeBeginIndicator() {

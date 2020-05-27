@@ -8,6 +8,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="fontFamily">@font/economica</item>
     </style>
     
     <style name="CustomPopUpMenuStyle" parent="Widget.AppCompat.Light.PopupMenu">

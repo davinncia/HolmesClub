@@ -17,7 +17,7 @@ class JsonParser {
         //val blocs = Gson().fromJson<List<TextBloc>>(json, blocType)
         //return blocs
 
-        val deserializer = BlocDeserializer("type")
+        val deserializer = BlocDeserializer("blocType")
         deserializer.registerBlocType("Text", TextBloc::class.java)
         deserializer.registerBlocType("Image", ImageBloc::class.java)
         val gson = GsonBuilder().registerTypeAdapter(Bloc::class.java, deserializer).create()

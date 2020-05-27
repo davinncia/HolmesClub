@@ -6,12 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import com.davinciapp.holmesclub.di.ViewModelFactory
 import com.davinciapp.holmesclub.model.Bloc
 import com.davinciapp.holmesclub.model.ImageBloc
 import com.davinciapp.holmesclub.model.TextBloc
 
 class WritingActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: WritingViewModel
     private val layout by bind<LinearLayout>(R.id.linear_layout_writing)
 
     //DEBUG
@@ -21,11 +25,33 @@ class WritingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_writing)
 
-        addTextBloc()
-
         //CLICKS
         findViewById<ImageView>(R.id.iv_font_size_writing).setOnClickListener { showFontOptionsPopUp(it) }
         findViewById<ImageView>(R.id.iv_paragraph_writing).setOnClickListener { showParagraphOptionsPopUp(it) }
+
+        //Getting ViewModel via Factory
+        viewModel = ViewModelProvider(
+            this, ViewModelFactory.getInstance(application))[WritingViewModel::class.java]
+
+        //Listening
+        viewModel.blocs.observe(this, Observer {
+            //Retrieved draft
+            //DEBUG
+            layout.removeAllViews()
+            displayBlocsOnView(it)
+        })
+
+        //DEBUG
+        viewModel.testJson.observe(this, Observer {
+            //Display JSON
+            val textView = TextView(this)
+            textView.text = it
+            layout.removeAllViews()
+            layout.addView(textView)
+        })
+
+        addTextBloc()
+
     }
 
 
@@ -60,26 +86,28 @@ class WritingActivity : AppCompatActivity() {
         //POP UP WINDOW
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val popView = inflater.inflate(R.layout.popup_window_font, null, false)
-        val popup = PopupWindow(popView, LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT, true)
+        val popWindow = PopupWindow(popView, LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT, true)
 
         popView.findViewById<ImageView>(R.id.iv_font_big_writing).setOnClickListener {
             //BIG
             currentFocus?.let {
                 if (it is TextBlocWidget) {
-                    it.styleBig()
+                    it.setStyle(WritingStyle.Styles.BIG)
                 }
             }
+            popWindow.dismiss()
         }
 
         popView.findViewById<ImageView>(R.id.iv_font_small_writing).setOnClickListener {
             //SMALL
             currentFocus?.let {
                 if (it is TextBlocWidget) {
-                    it.styleSmall()
+                    it.setStyle(WritingStyle.Styles.SMALL)
                 }
             }
+            popWindow.dismiss()
         }
-        popup.showAsDropDown(view, 50, -250)
+        popWindow.showAsDropDown(view, 50, -250)
     }
 
     private fun showParagraphOptionsPopUp(view: View) {
@@ -127,9 +155,11 @@ class WritingActivity : AppCompatActivity() {
     //                                       A C T I O N
     //--------------------------------------------------------------------------------------------//
     private fun addTextBloc() {
+        val textBloc = TextBlocWidget(this)
+        layout.addView(textBloc)
+        textBloc.requestFocus()
 
-
-        layout.addView(TextBlocWidget(this))/*, object : TextBloc.SpecialKeyPressed {
+        /*, object : TextBloc.SpecialKeyPressed {
             override fun onEnterPressed(endText: CharSequence) {
                 Toast.makeText(applicationContext, endText, Toast.LENGTH_SHORT).show()
                 addTextBloc()
@@ -142,8 +172,24 @@ class WritingActivity : AppCompatActivity() {
         */
     }
 
-    private fun parseToJson() {
+    private fun displayBlocsOnView(blocs: List<Bloc>) {
+        for (bloc in blocs) {
+            if (bloc is TextBloc) {
+                val editText = TextBlocWidget(this)
+                editText.setText(bloc.text)
+                editText.setStyle(bloc.style)
+                layout.addView(editText)
+            } else if (bloc is ImageBloc) {
+                val imageView = ImageView(this) //Picture placeholder
+                imageView.background = getDrawable(bloc.resId)
+                layout.addView(imageView)
+                //Fetch picture in BackGround
+            }
+        }
+    }
 
+    private fun parseToJson() {
+/*
         val blocs = arrayListOf<Bloc>()
 
         for (i in 0 until layout.childCount) {
@@ -162,9 +208,13 @@ class WritingActivity : AppCompatActivity() {
 
         layout.removeAllViews()
         layout.addView(textView)
+
+ */
     }
 
     private fun parseToBlocs() {
+        /*
+
         val json = (layout.getChildAt(0) as TextView).text.toString()
         layout.removeAllViews()
         //val blocs = JsonParser().parseToBlocs(json)
@@ -181,6 +231,7 @@ class WritingActivity : AppCompatActivity() {
             }
 
         }
+         */
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -195,10 +246,11 @@ class WritingActivity : AppCompatActivity() {
         when(item.itemId) {
             R.id.menu_item_json_writing -> {
                 isJson = if (isJson) {
-                    parseToBlocs()
+                    val json = (layout.getChildAt(0) as TextView).text.toString()
+                    viewModel.readAndExposeJson(json)
                     false
                 } else {
-                    parseToJson()
+                    viewModel.showJson(layout)
                     true
                 }
                 Toast.makeText(this, "JSON", Toast.LENGTH_SHORT).show()
@@ -216,6 +268,11 @@ class WritingActivity : AppCompatActivity() {
 
 
     //--------------------------------------------------------------------------------------------//
+    override fun onStop() {
+        viewModel.saveDraft(layout)
+        super.onStop()
+    }
+
     companion object {
         fun newIntent(context: Context): Intent {
             return Intent(context, WritingActivity::class.java)
