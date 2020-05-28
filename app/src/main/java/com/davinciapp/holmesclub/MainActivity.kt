@@ -2,6 +2,7 @@ package com.davinciapp.holmesclub
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.davinciapp.holmesclub.editor.WritingActivity
 
 class MainActivity : AppCompatActivity() {
 

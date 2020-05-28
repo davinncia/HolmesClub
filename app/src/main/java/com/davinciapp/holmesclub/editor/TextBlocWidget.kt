@@ -1,4 +1,4 @@
-package com.davinciapp.holmesclub
+package com.davinciapp.holmesclub.editor
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -7,7 +7,9 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ImageSpan
 import androidx.core.content.res.ResourcesCompat
-import com.davinciapp.holmesclub.WritingStyle.Styles
+import com.davinciapp.holmesclub.R
+import com.davinciapp.holmesclub.model.WritingStyle
+import com.davinciapp.holmesclub.model.WritingStyle.Styles
 
 
 class TextBlocWidget(context: Context)
@@ -51,6 +53,9 @@ class TextBlocWidget(context: Context)
 
          */
 
+        //Ask for focus on creation
+        this.requestFocus()
+
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -65,7 +70,11 @@ class TextBlocWidget(context: Context)
             }
             Styles.BIG -> {
                 textStyle = Styles.BIG
-                WritingStyle(24F, 16, Typeface.BOLD)
+                WritingStyle(
+                    24F,
+                    16,
+                    Typeface.BOLD
+                )
             }
             else -> {
                 Styles.MEDIUM
@@ -74,7 +83,9 @@ class TextBlocWidget(context: Context)
         }
 
         this.textSize = writingStyle.size
-        this.setTypeface(ResourcesCompat.getFont(context, R.font.economica), writingStyle.typeFace)
+        this.setTypeface(ResourcesCompat.getFont(context,
+            R.font.economica
+        ), writingStyle.typeFace)
         this.setPadding(8, writingStyle.padding, 8, writingStyle.padding)
     }
 

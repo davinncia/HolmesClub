@@ -1,4 +1,4 @@
-package com.davinciapp.holmesclub
+package com.davinciapp.holmesclub.model
 
 import android.graphics.Typeface
 

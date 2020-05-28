@@ -1,7 +1,6 @@
 package com.davinciapp.holmesclub.model
 
 import com.davinciapp.holmesclub.R
-import com.davinciapp.holmesclub.WritingStyle
 
 //Parent class precizing type for Json deserialization
 abstract class Bloc{
@@ -18,7 +17,7 @@ data class TextBloc(
 }
 
 data class ImageBloc(
-    val resId: Int = R.drawable.ic_font_size
+    val resId: Int = R.drawable.ic_picture
 ) : Bloc() {
     init {
         blocType = "Image"

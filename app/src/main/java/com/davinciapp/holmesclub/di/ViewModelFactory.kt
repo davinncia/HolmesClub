@@ -3,8 +3,8 @@ package com.davinciapp.holmesclub.di
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.davinciapp.holmesclub.JsonParser
-import com.davinciapp.holmesclub.WritingViewModel
+import com.davinciapp.holmesclub.json.JsonParser
+import com.davinciapp.holmesclub.editor.WritingViewModel
 
 class ViewModelFactory private constructor(private val application: Application): ViewModelProvider.Factory {
 

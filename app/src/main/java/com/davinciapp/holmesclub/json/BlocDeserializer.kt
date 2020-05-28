@@ -1,4 +1,4 @@
-package com.davinciapp.holmesclub
+package com.davinciapp.holmesclub.json
 
 import com.davinciapp.holmesclub.model.Bloc
 import com.google.gson.Gson

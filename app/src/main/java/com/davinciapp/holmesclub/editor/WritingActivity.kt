@@ -1,4 +1,4 @@
-package com.davinciapp.holmesclub
+package com.davinciapp.holmesclub.editor
 
 import android.content.Context
 import android.content.Intent
@@ -8,12 +8,16 @@ import android.view.*
 import android.widget.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.davinciapp.holmesclub.*
 import com.davinciapp.holmesclub.di.ViewModelFactory
 import com.davinciapp.holmesclub.model.Bloc
 import com.davinciapp.holmesclub.model.ImageBloc
 import com.davinciapp.holmesclub.model.TextBloc
+import com.davinciapp.holmesclub.model.WritingStyle
 
-class WritingActivity : AppCompatActivity() {
+class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocClickListener {
+
+    //TODO: there should always be a least 1 bloc
 
     private lateinit var viewModel: WritingViewModel
     private val layout by bind<LinearLayout>(R.id.linear_layout_writing)
@@ -28,6 +32,7 @@ class WritingActivity : AppCompatActivity() {
         //CLICKS
         findViewById<ImageView>(R.id.iv_font_size_writing).setOnClickListener { showFontOptionsPopUp(it) }
         findViewById<ImageView>(R.id.iv_paragraph_writing).setOnClickListener { showParagraphOptionsPopUp(it) }
+        findViewById<ImageView>(R.id.iv_image_writing).setOnClickListener { addPictureBloc() }
 
         //Getting ViewModel via Factory
         viewModel = ViewModelProvider(
@@ -52,11 +57,13 @@ class WritingActivity : AppCompatActivity() {
 
         addTextBloc()
 
+
+
     }
 
 
     //--------------------------------------------------------------------------------------------//
-    //                                      P O P   UP   M E N U
+    //                                      T O O L   B A R
     //--------------------------------------------------------------------------------------------//
     private fun handleToolBarClicks(view: View) {
         /*when (view.id) {
@@ -82,6 +89,7 @@ class WritingActivity : AppCompatActivity() {
 
     }
 
+    //FONT STYLE
     private fun showFontOptionsPopUp(view: View) {
         //POP UP WINDOW
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -110,6 +118,7 @@ class WritingActivity : AppCompatActivity() {
         popWindow.showAsDropDown(view, 50, -250)
     }
 
+    //PARAGRAPH OPTIONS
     private fun showParagraphOptionsPopUp(view: View) {
         //POP UP WINDOW
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -117,12 +126,13 @@ class WritingActivity : AppCompatActivity() {
         val popWindow = PopupWindow(popView, LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT, true)
 
         popView.findViewById<ImageView>(R.id.iv_paragraph_add_writing).setOnClickListener {
-            //ADD TEXT BLOC and get focus
-            layout.addView(TextBlocWidget(this))
-            currentFocus?.let {
-                val index = layout.indexOfChild(it)
-                layout.getChildAt(index + 1).requestFocus()
-            }
+            //ADD text bloc at next position
+            addViewBelowFocus(TextBlocWidget(this))
+
+            //currentFocus?.let {
+            //    val index = layout.indexOfChild(it)
+            //    layout.getChildAt(index + 1).requestFocus()
+            //}
             popWindow.dismiss()
         }
 
@@ -150,14 +160,18 @@ class WritingActivity : AppCompatActivity() {
         popWindow.showAsDropDown(view, 50, -250)
     }
 
+    //PICTURE
+    private fun addPictureBloc() {
+        addViewBelowFocus(MyImageBlocWidget(this, this))
+    }
+
 
     //--------------------------------------------------------------------------------------------//
-    //                                       A C T I O N
+    //                                          U I
     //--------------------------------------------------------------------------------------------//
     private fun addTextBloc() {
         val textBloc = TextBlocWidget(this)
         layout.addView(textBloc)
-        textBloc.requestFocus()
 
         /*, object : TextBloc.SpecialKeyPressed {
             override fun onEnterPressed(endText: CharSequence) {
@@ -172,6 +186,13 @@ class WritingActivity : AppCompatActivity() {
         */
     }
 
+
+    private fun addViewBelowFocus(view: View) {
+        currentFocus?.let {
+            layout.addView(view, layout.indexOfChild(it) + 1)
+        } ?: layout.addView(view)
+    }
+
     private fun displayBlocsOnView(blocs: List<Bloc>) {
         for (bloc in blocs) {
             if (bloc is TextBloc) {
@@ -180,9 +201,10 @@ class WritingActivity : AppCompatActivity() {
                 editText.setStyle(bloc.style)
                 layout.addView(editText)
             } else if (bloc is ImageBloc) {
-                val imageView = ImageView(this) //Picture placeholder
-                imageView.background = getDrawable(bloc.resId)
-                layout.addView(imageView)
+                //val imageView = ImageView(this) //Picture placeholder
+                //imageView.background = getDrawable(bloc.resId)
+                //layout.addView(imageView)
+                layout.addView(MyImageBlocWidget(this, this))
                 //Fetch picture in BackGround
             }
         }
@@ -277,5 +299,9 @@ class WritingActivity : AppCompatActivity() {
         fun newIntent(context: Context): Intent {
             return Intent(context, WritingActivity::class.java)
         }
+    }
+
+    override fun onClearImageBlocClicked(imageBlocWidget: MyImageBlocWidget) {
+        layout.removeView(imageBlocWidget)
     }
 }
