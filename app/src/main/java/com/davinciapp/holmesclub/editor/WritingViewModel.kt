@@ -6,9 +6,13 @@ import android.widget.LinearLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.davinciapp.holmesclub.editor.widgets.MyImageBlocWidget
+import com.davinciapp.holmesclub.editor.widgets.SeparatorBlocWidget
+import com.davinciapp.holmesclub.editor.widgets.TextBlocWidget
 import com.davinciapp.holmesclub.json.JsonParser
 import com.davinciapp.holmesclub.model.Bloc
 import com.davinciapp.holmesclub.model.ImageBloc
+import com.davinciapp.holmesclub.model.SeparatorBloc
 import com.davinciapp.holmesclub.model.TextBloc
 
 class WritingViewModel(private val jsonParser: JsonParser) : ViewModel() {
@@ -46,6 +50,8 @@ class WritingViewModel(private val jsonParser: JsonParser) : ViewModel() {
                 blocs.add(TextBloc(bloc.text.toString(), bloc.textStyle))
             } else if (bloc is MyImageBlocWidget) {
                 blocs.add(ImageBloc())
+            } else if (bloc is SeparatorBlocWidget) {
+                blocs.add(SeparatorBloc(bloc.resId))
             }
         }
 

@@ -1,4 +1,4 @@
-package com.davinciapp.holmesclub.editor
+package com.davinciapp.holmesclub.editor.widgets
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -12,8 +12,7 @@ import com.davinciapp.holmesclub.model.WritingStyle
 import com.davinciapp.holmesclub.model.WritingStyle.Styles
 
 
-class TextBlocWidget(context: Context)
-    : androidx.appcompat.widget.AppCompatEditText(context) {
+class TextBlocWidget(context: Context) : androidx.appcompat.widget.AppCompatEditText(context) {
 
     var textStyle = Styles.MEDIUM
 
@@ -64,29 +63,39 @@ class TextBlocWidget(context: Context)
     fun setStyle(styleType: Styles) {
         val writingStyle =
             when (styleType) {
-            Styles.SMALL -> {
-                textStyle = Styles.SMALL
-                WritingStyle(16F)
+                Styles.SMALL -> {
+                    textStyle = Styles.SMALL
+                    WritingStyle(16F)
+                }
+                Styles.BIG -> {
+                    textStyle = Styles.BIG
+                    WritingStyle(
+                        24F,
+                        paddingBottom = 16,
+                        typeFace = Typeface.BOLD
+                    )
+                }
+                Styles.QUOTE -> {
+                    textStyle = Styles.QUOTE
+                    WritingStyle(
+                        18F,
+                        paddingStart = 46,
+                        typeFace = Typeface.ITALIC,
+                        colorRes = R.color.greyDark,
+                        backgroundRes = R.drawable.quote_background
+                    )
+                }
+                else -> {
+                    textStyle = Styles.MEDIUM
+                    WritingStyle()
+                }
             }
-            Styles.BIG -> {
-                textStyle = Styles.BIG
-                WritingStyle(
-                    24F,
-                    16,
-                    Typeface.BOLD
-                )
-            }
-            else -> {
-                Styles.MEDIUM
-                WritingStyle()
-            }
-        }
 
         this.textSize = writingStyle.size
-        this.setTypeface(ResourcesCompat.getFont(context,
-            R.font.economica
-        ), writingStyle.typeFace)
-        this.setPadding(8, writingStyle.padding, 8, writingStyle.padding)
+        this.setTypeface(ResourcesCompat.getFont(context, R.font.economica), writingStyle.typeFace)
+        this.setPadding(writingStyle.paddingStart, writingStyle.paddingTop, 8, writingStyle.paddingBottom)
+        this.setTextColor(context.resources.getColor(writingStyle.colorRes))
+        this.setBackgroundResource(writingStyle.backgroundRes)
     }
 
 

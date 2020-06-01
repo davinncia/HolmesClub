@@ -10,10 +10,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.davinciapp.holmesclub.*
 import com.davinciapp.holmesclub.di.ViewModelFactory
-import com.davinciapp.holmesclub.model.Bloc
-import com.davinciapp.holmesclub.model.ImageBloc
-import com.davinciapp.holmesclub.model.TextBloc
-import com.davinciapp.holmesclub.model.WritingStyle
+import com.davinciapp.holmesclub.editor.widgets.MyImageBlocWidget
+import com.davinciapp.holmesclub.editor.widgets.SeparatorBlocWidget
+import com.davinciapp.holmesclub.editor.widgets.TextBlocWidget
+import com.davinciapp.holmesclub.model.*
 
 class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocClickListener {
 
@@ -32,6 +32,8 @@ class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocC
         //CLICKS
         findViewById<ImageView>(R.id.iv_font_size_writing).setOnClickListener { showFontOptionsPopUp(it) }
         findViewById<ImageView>(R.id.iv_paragraph_writing).setOnClickListener { showParagraphOptionsPopUp(it) }
+        findViewById<ImageView>(R.id.iv_quote_writing).setOnClickListener { setQuoteStyle() }
+        findViewById<ImageView>(R.id.iv_separator_writing).setOnClickListener { addSeparator() }
         findViewById<ImageView>(R.id.iv_image_writing).setOnClickListener { addPictureBloc() }
 
         //Getting ViewModel via Factory
@@ -127,7 +129,11 @@ class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocC
 
         popView.findViewById<ImageView>(R.id.iv_paragraph_add_writing).setOnClickListener {
             //ADD text bloc at next position
-            addViewBelowFocus(TextBlocWidget(this))
+            addViewBelowFocus(
+                TextBlocWidget(
+                    this
+                )
+            )
 
             //currentFocus?.let {
             //    val index = layout.indexOfChild(it)
@@ -160,17 +166,42 @@ class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocC
         popWindow.showAsDropDown(view, 50, -250)
     }
 
-    //PICTURE
-    private fun addPictureBloc() {
-        addViewBelowFocus(MyImageBlocWidget(this, this))
+    //QUOTE
+    private fun setQuoteStyle() {
+
+        currentFocus?.let {
+            if (it is TextBlocWidget) {
+                if (it.textStyle == WritingStyle.Styles.QUOTE) {
+                    it.setStyle(WritingStyle.Styles.MEDIUM) //Back to default
+                } else {
+                    it.setStyle(WritingStyle.Styles.QUOTE) //Quote style
+                }
+            }
+        }
+
     }
 
+    //SEPARATOR
+    private fun addSeparator() {
+        addViewBelowFocus(SeparatorBlocWidget(this))
+    }
+
+    //PICTURE
+    private fun addPictureBloc() {
+        addViewBelowFocus(
+            MyImageBlocWidget(
+                this,
+                this
+            )
+        )
+    }
 
     //--------------------------------------------------------------------------------------------//
     //                                          U I
     //--------------------------------------------------------------------------------------------//
     private fun addTextBloc() {
-        val textBloc = TextBlocWidget(this)
+        val textBloc =
+            TextBlocWidget(this)
         layout.addView(textBloc)
 
         /*, object : TextBloc.SpecialKeyPressed {
@@ -195,17 +226,28 @@ class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocC
 
     private fun displayBlocsOnView(blocs: List<Bloc>) {
         for (bloc in blocs) {
-            if (bloc is TextBloc) {
-                val editText = TextBlocWidget(this)
-                editText.setText(bloc.text)
-                editText.setStyle(bloc.style)
-                layout.addView(editText)
-            } else if (bloc is ImageBloc) {
-                //val imageView = ImageView(this) //Picture placeholder
-                //imageView.background = getDrawable(bloc.resId)
-                //layout.addView(imageView)
-                layout.addView(MyImageBlocWidget(this, this))
-                //Fetch picture in BackGround
+            when (bloc) {
+                is TextBloc -> {
+                    val editText =
+                        TextBlocWidget(this)
+                    editText.setText(bloc.text)
+                    editText.setStyle(bloc.style)
+                    layout.addView(editText)
+                }
+                is ImageBloc -> {
+                    layout.addView(
+                        MyImageBlocWidget(
+                            this,
+                            this
+                        )
+                    )
+                    //Fetch picture in BackGround
+                }
+                is SeparatorBloc -> {
+                    layout.addView(
+                        SeparatorBlocWidget(this)
+                    )
+                }
             }
         }
     }

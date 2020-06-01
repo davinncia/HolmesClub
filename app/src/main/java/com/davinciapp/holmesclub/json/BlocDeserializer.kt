@@ -19,12 +19,12 @@ class BlocDeserializer(private val blocTypeElementName: String) : JsonDeserializ
         context: JsonDeserializationContext?
     ): Bloc? {
 
-        val animalObject = json.asJsonObject
-        val blocTypeElement = animalObject[blocTypeElementName]
+        val blocObject = json.asJsonObject
+        val blocTypeElement = blocObject[blocTypeElementName]
 
         val blocType: Class<out Bloc?>? = blocTypeRegistry[blocTypeElement.asString]
 
-        return gson.fromJson(animalObject, blocType)
+        return gson.fromJson(blocObject, blocType)
     }
 
     fun registerBlocType(blocTypeName: String, blocType: Class<out Bloc?>) {

@@ -16,6 +16,14 @@ data class TextBloc(
     }
 }
 
+data class SeparatorBloc(
+    val resId: Int
+): Bloc() {
+    init {
+        blocType = "Separator"
+    }
+}
+
 data class ImageBloc(
     val resId: Int = R.drawable.ic_picture
 ) : Bloc() {

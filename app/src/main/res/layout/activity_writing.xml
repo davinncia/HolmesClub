@@ -45,6 +45,20 @@
             android:padding="8dp"
             android:src="@drawable/ic_paragraph" />
 
+        <ImageView
+            android:id="@+id/iv_quote_writing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:src="@drawable/ic_quote" />
+
+        <ImageView
+            android:id="@+id/iv_separator_writing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:src="@drawable/ic_paragraph" />
+
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"

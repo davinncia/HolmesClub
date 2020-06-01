@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/item_drawer_feed_main"
+            android:icon="@drawable/ic_picture"
+            android:title="Feed" />
+    </group>
+
+    <item android:title="Configuration">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/item_drawer_profile_main"
+                    android:icon="@drawable/ic_picture"
+                    android:title="Profile" />
+                <item
+                    android:id="@+id/item_drawer_my_articles_main"
+                    android:icon="@drawable/ic_picture"
+                    android:title="My Articles" />
+            </group>
+        </menu>
+    </item>
+
+</menu>

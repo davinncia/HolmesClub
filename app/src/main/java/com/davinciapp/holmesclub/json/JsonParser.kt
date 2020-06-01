@@ -2,6 +2,7 @@ package com.davinciapp.holmesclub.json
 
 import com.davinciapp.holmesclub.model.Bloc
 import com.davinciapp.holmesclub.model.ImageBloc
+import com.davinciapp.holmesclub.model.SeparatorBloc
 import com.davinciapp.holmesclub.model.TextBloc
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -21,6 +22,7 @@ class JsonParser {
             BlocDeserializer("blocType")
         deserializer.registerBlocType("Text", TextBloc::class.java)
         deserializer.registerBlocType("Image", ImageBloc::class.java)
+        deserializer.registerBlocType("Separator", SeparatorBloc::class.java)
         val gson = GsonBuilder().registerTypeAdapter(Bloc::class.java, deserializer).create()
 
         return gson.fromJson(jsonStr, object : TypeToken<List<Bloc>>(){}.type)

@@ -1,11 +1,10 @@
-package com.davinciapp.holmesclub.editor
+package com.davinciapp.holmesclub.editor.widgets
 
 import android.content.Context
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
-import android.widget.Toast
 import com.davinciapp.holmesclub.R
 
 class MyImageBlocWidget(context: Context, listener: OnClearImageBlocClickListener) : RelativeLayout(context) {
@@ -28,7 +27,7 @@ class MyImageBlocWidget(context: Context, listener: OnClearImageBlocClickListene
         this.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 clearView.visibility = View.VISIBLE
-                this.background = context.getDrawable(R.drawable.image_bloc_frame)
+                this.background = context.getDrawable(R.drawable.selection_bloc_frame)
             } else {
                 this.background = null
                 clearView.visibility = View.GONE
@@ -64,6 +63,7 @@ class MyImageBlocWidget(context: Context, listener: OnClearImageBlocClickListene
         this.requestFocus()
 
     }
+
 
     interface OnClearImageBlocClickListener {
         fun onClearImageBlocClicked(imageBlocWidget: MyImageBlocWidget)
