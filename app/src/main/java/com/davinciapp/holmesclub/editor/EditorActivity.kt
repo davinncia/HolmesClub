@@ -2,24 +2,25 @@ package com.davinciapp.holmesclub.editor
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.*
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.davinciapp.holmesclub.*
+import com.davinciapp.holmesclub.R
+import com.davinciapp.holmesclub.bind
 import com.davinciapp.holmesclub.di.ViewModelFactory
 import com.davinciapp.holmesclub.editor.widgets.MyImageBlocWidget
 import com.davinciapp.holmesclub.editor.widgets.SeparatorBlocWidget
 import com.davinciapp.holmesclub.editor.widgets.TextBlocWidget
 import com.davinciapp.holmesclub.model.*
 
-class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocClickListener {
+class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocClickListener {
 
-    //TODO: there should always be a least 1 bloc
+    //TODO: Force title bloc
 
-    private lateinit var viewModel: WritingViewModel
+    private lateinit var viewModel: EditorViewModel
     private val layout by bind<LinearLayout>(R.id.linear_layout_writing)
 
     //DEBUG
@@ -38,7 +39,7 @@ class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocC
 
         //Getting ViewModel via Factory
         viewModel = ViewModelProvider(
-            this, ViewModelFactory.getInstance(application))[WritingViewModel::class.java]
+            this, ViewModelFactory.getInstance(application))[EditorViewModel::class.java]
 
         //Listening
         viewModel.blocs.observe(this, Observer {
@@ -339,7 +340,7 @@ class WritingActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocC
 
     companion object {
         fun newIntent(context: Context): Intent {
-            return Intent(context, WritingActivity::class.java)
+            return Intent(context, EditorActivity::class.java)
         }
     }
 

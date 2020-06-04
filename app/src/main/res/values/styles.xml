@@ -12,5 +12,14 @@
     </style>
     
 
+    <style name="ItemTitle">
+        <item name="android:textSize">21sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ItemContent">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/greyDark</item>
+    </style>
 
 </resources>

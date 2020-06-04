@@ -1,11 +1,12 @@
 package com.davinciapp.holmesclub.editor
 
 import android.util.Log
-import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.davinciapp.holmesclub.drafts.model.Draft
 import com.davinciapp.holmesclub.editor.widgets.MyImageBlocWidget
 import com.davinciapp.holmesclub.editor.widgets.SeparatorBlocWidget
 import com.davinciapp.holmesclub.editor.widgets.TextBlocWidget
@@ -14,24 +15,38 @@ import com.davinciapp.holmesclub.model.Bloc
 import com.davinciapp.holmesclub.model.ImageBloc
 import com.davinciapp.holmesclub.model.SeparatorBloc
 import com.davinciapp.holmesclub.model.TextBloc
+import com.davinciapp.holmesclub.repository.DraftRepository
+import kotlinx.coroutines.launch
 
-class WritingViewModel(private val jsonParser: JsonParser) : ViewModel() {
+class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo: DraftRepository) : ViewModel() {
 
     private val blocsMutable = MutableLiveData<List<Bloc>>()
     val blocs: LiveData<List<Bloc>> = blocsMutable
 
     val testJson = MutableLiveData<String>()
 
+    var jsonArticle: String = ""
+
     init {
         //Get draft if existing
-        readAndExposeJson("""[{"style":"BIG","text":"Titre","blocType":"Text"},{"style":"MEDIUM","text":"Corps de l\u0027article","blocType":"Text"},{"resId":2131099750,"blocType":"Image"},{"style":"MEDIUM","text":"Héhé ","blocType":"Text"}]""")
+        if (jsonArticle.isEmpty()) {
+            readAndExposeJson("""[{"style":"BIG","text":"Titre","blocType":"Text"},{"style":"MEDIUM","text":"Corps de l\u0027article","blocType":"Text"},{"resId":2131099750,"blocType":"Image"},{"style":"MEDIUM","text":"Héhé ","blocType":"Text"}]""")
+        } else {
+            readAndExposeJson(jsonArticle)
+        }
 
     }
 
     fun saveDraft(layout: LinearLayout) {
-        val jsonArticle = convertToJson(layout)
-        Log.d("debuglog", jsonArticle)
+        jsonArticle = convertToJson(layout)
+        Log.d("debuglog", "SAVED")
         readAndExposeJson(jsonArticle)
+
+        viewModelScope.launch {
+            val draft = Draft("title", jsonArticle, System.currentTimeMillis())
+            draftRepo.insert(draft)
+        }
+
     }
 
     //DEBUG

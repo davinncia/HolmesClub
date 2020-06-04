@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".editor.WritingActivity">
+    tools:context=".editor.EditorActivity">
 
     <LinearLayout
         android:id="@+id/linear_layout_writing"

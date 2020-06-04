@@ -7,6 +7,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.davinciapp.holmesclub.drafts.DraftActivity
 import com.google.android.material.navigation.NavigationView
 
 
@@ -47,7 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.item_drawer_feed_main -> Toast.makeText(this, "Feed", Toast.LENGTH_SHORT).show()
             R.id.item_drawer_profile_main -> Toast.makeText(this, "Profile", Toast.LENGTH_SHORT).show()
-            R.id.item_drawer_my_articles_main -> Toast.makeText(this, "Articles", Toast.LENGTH_SHORT).show()
+            R.id.item_drawer_my_articles_main -> startActivity(DraftActivity.newIntent(this))
         }
 
         this.drawerLayout.closeDrawer(GravityCompat.START);
