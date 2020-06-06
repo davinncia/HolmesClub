@@ -8,10 +8,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.davinciapp.holmesclub.R
 import com.davinciapp.holmesclub.di.ViewModelFactory
+import com.davinciapp.holmesclub.editor.EditorActivity
 
 
 class DraftListFragment : Fragment() {
@@ -34,12 +36,24 @@ class DraftListFragment : Fragment() {
         // Inflate the layout for this fragment
         val rootView =  inflater.inflate(R.layout.fragment_my_articles_list, container, false)
 
-        val adapter = DraftAdapter()
+        //ViewModel
+        val viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireActivity().application))[DraftViewModel::class.java]
+
+        //Recycler View
+        val adapter = DraftAdapter(object : DraftAdapter.OnDraftItemClickListener {
+            override fun onDraftItemClicked(draftId: Int) {
+                startActivity(EditorActivity.newIntent(requireContext(), draftId))
+            }
+            override fun onDraftItemSwiped(draftId: Int) {
+                viewModel.removeDraft(draftId)
+            }
+        })
         initRecyclerView(rootView, adapter)
 
-        val viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(requireActivity().application))[DraftViewModel::class.java]
+        //Listen
         viewModel.draftItems.observe(this, Observer {
-            adapter.populateList(it)
+            //adapter.populateList(it)
+            adapter.submitList(it)
         })
 
         return rootView
@@ -50,6 +64,8 @@ class DraftListFragment : Fragment() {
         rootView.findViewById<RecyclerView>(R.id.recycler_view_article_list).apply {
             this.adapter = adapter
             this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            //Swipe to delete function
+            ItemTouchHelper(SwipeToDeleteCallback(adapter)).attachToRecyclerView(this)
         }
 
     }

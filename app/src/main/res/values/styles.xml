@@ -15,11 +15,14 @@
     <style name="ItemTitle">
         <item name="android:textSize">21sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:padding">8dp</item>
     </style>
 
     <style name="ItemContent">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/greyDark</item>
+        <item name="android:padding">8dp</item>
+
     </style>
 
 </resources>

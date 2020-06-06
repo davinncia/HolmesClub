@@ -15,10 +15,13 @@ class DraftRepository(context: Context) {
     }
 
     fun getAllDrafts() = draftDao.getAll()
+    suspend fun getDraft(id: Int) = draftDao.get(id)
 
     suspend fun insert(draft: Draft) = draftDao.insert(draft)
 
-    suspend fun delete(draft: Draft) = draftDao.delete(draft)
+    suspend fun update(draft: Draft) = draftDao.update(draft)
+
+    suspend fun delete(draftId: Int) = draftDao.delete(draftId)
 
     companion object {
         private var INSTANCE: DraftRepository? = null

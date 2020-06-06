@@ -18,33 +18,63 @@ import com.davinciapp.holmesclub.model.TextBloc
 import com.davinciapp.holmesclub.repository.DraftRepository
 import kotlinx.coroutines.launch
 
-class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo: DraftRepository) : ViewModel() {
+class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo: DraftRepository) :
+    ViewModel() {
 
     private val blocsMutable = MutableLiveData<List<Bloc>>()
     val blocs: LiveData<List<Bloc>> = blocsMutable
 
     val testJson = MutableLiveData<String>()
 
-    var jsonArticle: String = ""
+    //new draft = -1
+    private var draftId: Int? = null
 
-    init {
-        //Get draft if existing
-        if (jsonArticle.isEmpty()) {
-            readAndExposeJson("""[{"style":"BIG","text":"Titre","blocType":"Text"},{"style":"MEDIUM","text":"Corps de l\u0027article","blocType":"Text"},{"resId":2131099750,"blocType":"Image"},{"style":"MEDIUM","text":"Héhé ","blocType":"Text"}]""")
+    fun getDraft(id: Int) {
+        //Getting draft if not already done
+        if (draftId == null) {
+            draftId = id //Memorize draft id
+            if (draftId != -1) {
+                Log.d("debuglog", "GETTING DRAFT FROM DB: $id")
+                //Already existing draft
+                viewModelScope.launch {
+                    val draft = draftRepo.getDraft(id)
+                    readAndExposeJson(draft.content)
+                }
+            } else {
+                Log.d("debuglog", "New draft !")
+                //New draft
+                readAndExposeJson("""[{"style":"BIG","text":"Titre","blocType":"Text"},{"style":"MEDIUM","text":"Corps de l\u0027article","blocType":"Text"},{"resId":2131099750,"blocType":"Image"},{"style":"MEDIUM","text":"Héhé ","blocType":"Text"}]""")
+            }
         } else {
-            readAndExposeJson(jsonArticle)
+            Log.d("debuglog", "We already got it")
         }
 
     }
 
     fun saveDraft(layout: LinearLayout) {
-        jsonArticle = convertToJson(layout)
-        Log.d("debuglog", "SAVED")
-        readAndExposeJson(jsonArticle)
+        val jsonArticle = convertToJson(layout)
+        readAndExposeJson(jsonArticle) //DEBUG
 
         viewModelScope.launch {
-            val draft = Draft("title", jsonArticle, System.currentTimeMillis())
-            draftRepo.insert(draft)
+            //Draft object
+            var title = "unknown"
+            val titleBloc = layout.getChildAt(0)
+            if (titleBloc is TextBlocWidget) {
+                title = titleBloc.text.toString()
+            }
+            val draft = Draft(title, jsonArticle, System.currentTimeMillis())
+
+            //Db instructions
+            if (draftId == -1) {
+                draftRepo.insert(draft)
+                Log.d("debuglog", "NEW DRAFT SAVED")
+            } else {
+                draftId?.let {
+                    draft.id = it
+                    draftRepo.update(draft)
+                    Log.d("debuglog", "DRAFT UPDATED")
+                }
+            }
         }
 
     }
@@ -70,10 +100,10 @@ class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo:
             }
         }
 
-        return  jsonParser.parseToJson(blocs)
+        return jsonParser.parseToJson(blocs)
     }
 
-    fun readAndExposeJson(jsonStr: String){
+    fun readAndExposeJson(jsonStr: String) {
         val blocs = jsonParser.deserializeBlocs(jsonStr)
         blocsMutable.value = blocs
     }

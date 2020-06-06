@@ -30,6 +30,8 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_writing)
 
+        val draftId = intent.getIntExtra(DRAFT_ID_KEY, -1)
+
         //CLICKS
         findViewById<ImageView>(R.id.iv_font_size_writing).setOnClickListener { showFontOptionsPopUp(it) }
         findViewById<ImageView>(R.id.iv_paragraph_writing).setOnClickListener { showParagraphOptionsPopUp(it) }
@@ -40,6 +42,9 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         //Getting ViewModel via Factory
         viewModel = ViewModelProvider(
             this, ViewModelFactory.getInstance(application))[EditorViewModel::class.java]
+
+        //Sending draft id to vm
+        viewModel.getDraft(draftId)
 
         //Listening
         viewModel.blocs.observe(this, Observer {
@@ -339,8 +344,12 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     }
 
     companion object {
-        fun newIntent(context: Context): Intent {
-            return Intent(context, EditorActivity::class.java)
+        const val DRAFT_ID_KEY = "draft_id_key"
+
+        fun newIntent(context: Context, draftId: Int = -1): Intent {
+            val intent =  Intent(context, EditorActivity::class.java)
+            intent.putExtra(DRAFT_ID_KEY, draftId)
+            return intent
         }
     }
 
