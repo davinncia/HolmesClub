@@ -82,7 +82,7 @@ class TextBlocWidget(context: Context) : androidx.appcompat.widget.AppCompatEdit
                         paddingStart = 46,
                         typeFace = Typeface.ITALIC,
                         colorRes = R.color.greyDark,
-                        backgroundRes = R.drawable.quote_background
+                        backgroundRes = R.drawable.background_quote
                     )
                 }
                 else -> {

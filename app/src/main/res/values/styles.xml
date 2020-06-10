@@ -10,7 +10,12 @@
 
         <item name="fontFamily">@font/economica</item>
     </style>
-    
+
+    <style name="ArticleTitle">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
 
     <style name="ItemTitle">
         <item name="android:textSize">21sp</item>
@@ -22,7 +27,6 @@
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/greyDark</item>
         <item name="android:padding">8dp</item>
-
     </style>
 
 </resources>

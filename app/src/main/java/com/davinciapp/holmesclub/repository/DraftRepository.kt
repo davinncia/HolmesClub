@@ -17,11 +17,16 @@ class DraftRepository(context: Context) {
     fun getAllDrafts() = draftDao.getAll()
     suspend fun getDraft(id: Int) = draftDao.get(id)
 
-    suspend fun insert(draft: Draft) = draftDao.insert(draft)
+    suspend fun insert(draft: Draft): Long =
+        draftDao.insert(draft)
 
     suspend fun update(draft: Draft) = draftDao.update(draft)
+    suspend fun updateCoverPictureUri(id: Int, uri: String) = draftDao.updateCoverPictureUri(id, uri)
+    suspend fun updateDraftContent(id: Int, title: String, content: String, currentTime: Long) =
+        draftDao.updateDraftContent(id, title, content, currentTime)
 
-    suspend fun delete(draftId: Int) = draftDao.delete(draftId)
+    suspend fun delete(draftId: Int) =
+        draftDao.delete(draftId)
 
     companion object {
         private var INSTANCE: DraftRepository? = null

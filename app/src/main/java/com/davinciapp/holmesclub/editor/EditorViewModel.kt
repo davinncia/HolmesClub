@@ -1,5 +1,11 @@
 package com.davinciapp.holmesclub.editor
 
+import android.app.Application
+import android.content.ContentValues
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.LinearLayout
 import androidx.lifecycle.LiveData
@@ -17,12 +23,20 @@ import com.davinciapp.holmesclub.model.SeparatorBloc
 import com.davinciapp.holmesclub.model.TextBloc
 import com.davinciapp.holmesclub.repository.DraftRepository
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
-class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo: DraftRepository) :
-    ViewModel() {
+class EditorViewModel(
+    private val application: Application,
+    private val jsonParser: JsonParser,
+    private val draftRepo: DraftRepository)
+    : ViewModel() {
 
     private val blocsMutable = MutableLiveData<List<Bloc>>()
     val blocs: LiveData<List<Bloc>> = blocsMutable
+
+    private val draftUiMutable = MutableLiveData<DraftEditorUi>()
+    val draftUi: LiveData<DraftEditorUi> = draftUiMutable
 
     val testJson = MutableLiveData<String>()
 
@@ -38,12 +52,19 @@ class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo:
                 //Already existing draft
                 viewModelScope.launch {
                     val draft = draftRepo.getDraft(id)
-                    readAndExposeJson(draft.content)
+                    mapDraftForUi(draft)
+                    //readAndExposeJson(draft.content)
                 }
             } else {
                 Log.d("debuglog", "New draft !")
-                //New draft
-                readAndExposeJson("""[{"style":"BIG","text":"Titre","blocType":"Text"},{"style":"MEDIUM","text":"Corps de l\u0027article","blocType":"Text"},{"resId":2131099750,"blocType":"Image"},{"style":"MEDIUM","text":"Héhé ","blocType":"Text"}]""")
+                //New draft -> insert
+                val emptyBlocJson = """[{"style":"MEDIUM","text":"Let's write !","blocType":"Text"}]"""
+                val newDraft = Draft("New draft", emptyBlocJson, System.currentTimeMillis(), "android.resource://com.davinciapp.holmesclub/drawable/ic_sherlock")
+                viewModelScope.launch {
+                    draftId = draftRepo.insert(newDraft).toInt()
+                }
+                mapDraftForUi(newDraft)
+                //readAndExposeJson("""[{"style":"BIG","text":"Titre","blocType":"Text"},{"style":"MEDIUM","text":"Corps de l\u0027article","blocType":"Text"},{"resId":2131099750,"blocType":"Image"},{"style":"MEDIUM","text":"Héhé ","blocType":"Text"}]""")
             }
         } else {
             Log.d("debuglog", "We already got it")
@@ -51,39 +72,10 @@ class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo:
 
     }
 
-    fun saveDraft(layout: LinearLayout) {
-        val jsonArticle = convertToJson(layout)
-        readAndExposeJson(jsonArticle) //DEBUG
-
-        viewModelScope.launch {
-            //Draft object
-            var title = "unknown"
-            val titleBloc = layout.getChildAt(0)
-            if (titleBloc is TextBlocWidget) {
-                title = titleBloc.text.toString()
-            }
-            val draft = Draft(title, jsonArticle, System.currentTimeMillis())
-
-            //Db instructions
-            if (draftId == -1) {
-                draftRepo.insert(draft)
-                Log.d("debuglog", "NEW DRAFT SAVED")
-            } else {
-                draftId?.let {
-                    draft.id = it
-                    draftRepo.update(draft)
-                    Log.d("debuglog", "DRAFT UPDATED")
-                }
-            }
-        }
-
-    }
-
-    //DEBUG
-    fun showJson(layout: LinearLayout) {
-        val jsonArticle = convertToJson(layout)
-        //DEBUG
-        testJson.value = jsonArticle
+    private fun mapDraftForUi(draft: Draft) {
+        val blocs = jsonParser.deserializeBlocs(draft.content)
+        //Expose to view
+        draftUiMutable.value = DraftEditorUi(blocs, draft.pictureUri, draft.title)
     }
 
     private fun convertToJson(layout: LinearLayout): String {
@@ -103,9 +95,129 @@ class EditorViewModel(private val jsonParser: JsonParser, private val draftRepo:
         return jsonParser.parseToJson(blocs)
     }
 
-    fun readAndExposeJson(jsonStr: String) {
-        val blocs = jsonParser.deserializeBlocs(jsonStr)
-        blocsMutable.value = blocs
+    //--------------------------------------------------------------------------------------------//
+    //                                        D A T A B A S E
+    //--------------------------------------------------------------------------------------------//
+    fun saveDraft(layout: LinearLayout, title: String) {
+        val jsonArticle = convertToJson(layout)
+        //readAndExposeJson(jsonArticle) //DEBUG
+
+        viewModelScope.launch {
+            //Draft object
+            //var subTitle = "unknown"
+            //val titleBloc = layout.getChildAt(0)
+            //if (titleBloc is TextBlocWidget) {
+            //    subTitle = titleBloc.text.toString()
+            //}
+
+            //Db instructions
+            if (draftId == -1) {
+                //val draft = Draft(title, jsonArticle, System.currentTimeMillis(), "android.resource://com.davinciapp.holmesclub/drawable/ic_sherlock")
+                //draftId = draftRepo.insert(draft).toInt()
+                //Log.d("debuglog", "NEW DRAFT SAVED")
+            } else {
+
+                draftId?.let {
+                    //val draft = Draft(title, jsonArticle, System.currentTimeMillis(), "pic")
+                    //draft.id = it
+                    //draftRepo.update(draft)
+                    draftRepo.updateDraftContent(it, title, jsonArticle, System.currentTimeMillis())
+                    Log.d("debuglog", "DRAFT UPDATED")
+                }?: throw IllegalStateException("No draft instance.")
+
+
+            }
+        }
     }
 
+
+    //--------------------------------------------------------------------------------------------//
+    //                                      I M A G E S
+    //--------------------------------------------------------------------------------------------//
+    fun setPictureAsCover(data: Intent) {
+        //SAVING IN PHONE
+        val uri: String? =
+            if (data.data != null) {
+                //GALLERY
+                data.data.toString()
+                //val image = retrieveImageFromMediaStore(data.data)
+                //saveImageInMediaStore(image).toString()
+            } else {
+                //CAMERA
+                //Not using camera yet though
+                val imageBitmap = data.extras?.get("data") as Bitmap
+                saveImageInMediaStore(imageBitmap)?.toString()
+            }
+        uri?: throw NoSuchFieldException("Image uri could not be found")
+
+        //SAVING URI IN DB
+        viewModelScope.launch {
+            if (draftId == -1 || draftId == null) {
+                throw IllegalStateException("Draft not recognized")
+            } else {
+                draftRepo.updateCoverPictureUri(draftId!!, uri)
+            }
+        }
+
+    }
+
+    /*
+    //Could be used if we want to copy image. Doesn't seem necessary
+    private fun retrieveBitmapFromMediaStore(uri: Uri): Bitmap {
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        if (selectedImage != null) {
+            Cursor cursor = getContentResolver().query(selectedImage,
+                filePathColumn, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String picturePath = cursor.getString(columnIndex);
+                imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+                cursor.close();
+    }
+     */
+
+    private fun saveImageInMediaStore(pic: Bitmap): Uri? {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+
+        val values = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, timeStamp)
+            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+        }
+
+        val resolver = application.contentResolver
+
+        val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        uri?.let {
+            resolver.openOutputStream(uri)?.use { outputStream ->
+                pic.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                outputStream.close()
+            }
+
+            resolver.update(uri, values, null, null)
+
+        } ?: throw RuntimeException("MediaStore failed for some reason")
+        return uri
+    }
+
+
+    //--------------------------------------------------------------------------------------------//
+    //                                      D E B U G
+    //--------------------------------------------------------------------------------------------//
+    //DEBUG
+    fun showJson(layout: LinearLayout) {
+        val jsonArticle = convertToJson(layout)
+        //DEBUG
+        testJson.value = jsonArticle
+    }
+    //--------------------------------------------------------------------------------------------//
+    //                                      U I    M O D E L
+    //--------------------------------------------------------------------------------------------//
+    data class DraftEditorUi(
+        val blocs: List<Bloc>,
+        val coverPictureUri: String,
+        val title: String = "UNKNOWN TITLE"
+    )
 }

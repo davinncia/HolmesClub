@@ -1,13 +1,21 @@
 package com.davinciapp.holmesclub.editor
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.davinciapp.holmesclub.R
 import com.davinciapp.holmesclub.bind
 import com.davinciapp.holmesclub.di.ViewModelFactory
@@ -16,28 +24,34 @@ import com.davinciapp.holmesclub.editor.widgets.SeparatorBlocWidget
 import com.davinciapp.holmesclub.editor.widgets.TextBlocWidget
 import com.davinciapp.holmesclub.model.*
 
+
 class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocClickListener {
 
-    //TODO: Force title bloc
+    private val titleView by bind<EditText>(R.id.et_draft_title_editor)
 
     private lateinit var viewModel: EditorViewModel
-    private val layout by bind<LinearLayout>(R.id.linear_layout_writing)
+    private val layout by bind<LinearLayout>(R.id.linear_layout_blocs_editor)
 
     //DEBUG
     private var isJson = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_writing)
+        setContentView(R.layout.activity_editor)
 
         val draftId = intent.getIntExtra(DRAFT_ID_KEY, -1)
 
+        //VIEWS
+        val coverImageView = findViewById<ImageView>(R.id.iv_cover_editor)
+
         //CLICKS
-        findViewById<ImageView>(R.id.iv_font_size_writing).setOnClickListener { showFontOptionsPopUp(it) }
-        findViewById<ImageView>(R.id.iv_paragraph_writing).setOnClickListener { showParagraphOptionsPopUp(it) }
-        findViewById<ImageView>(R.id.iv_quote_writing).setOnClickListener { setQuoteStyle() }
-        findViewById<ImageView>(R.id.iv_separator_writing).setOnClickListener { addSeparator() }
-        findViewById<ImageView>(R.id.iv_image_writing).setOnClickListener { addPictureBloc() }
+        findViewById<ImageView>(R.id.iv_font_size_editor).setOnClickListener { showFontOptionsPopUp(it) }
+        findViewById<ImageView>(R.id.iv_paragraph_editor).setOnClickListener { showParagraphOptionsPopUp(it) }
+        findViewById<ImageView>(R.id.iv_quote_editor).setOnClickListener { setQuoteStyle() }
+        findViewById<ImageView>(R.id.iv_separator_editor).setOnClickListener { addSeparator() }
+        findViewById<ImageView>(R.id.iv_image_editor).setOnClickListener { addPictureBloc() }
+        //Cover pic
+        findViewById<ImageView>(R.id.iv_choose_cover_picture_editor).setOnClickListener { selectCoverPicture() }
 
         //Getting ViewModel via Factory
         viewModel = ViewModelProvider(
@@ -47,6 +61,14 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         viewModel.getDraft(draftId)
 
         //Listening
+        viewModel.draftUi.observe(this, Observer {
+            Glide.with(this).load(Uri.parse(it.coverPictureUri)).into(coverImageView)
+            //Glide.with(this).load("android.resource://com.davinciapp.holmesclub/drawable/ic_sherlock").into(coverImageView)
+            //Glide.with(this).load(R.drawable.ic_sherlock).into(coverImageView)
+            titleView.setText(it.title)
+            displayBlocsOnView(it.blocs)
+        })
+        /*
         viewModel.blocs.observe(this, Observer {
             //Retrieved draft
             //DEBUG
@@ -62,10 +84,7 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
             layout.removeAllViews()
             layout.addView(textView)
         })
-
-        addTextBloc()
-
-
+        */
 
     }
 
@@ -203,12 +222,8 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     }
 
     //--------------------------------------------------------------------------------------------//
-    //                                          U I
+    //                                     U I     A C T I O N
     //--------------------------------------------------------------------------------------------//
-    private fun addTextBloc() {
-        val textBloc =
-            TextBlocWidget(this)
-        layout.addView(textBloc)
 
         /*, object : TextBloc.SpecialKeyPressed {
             override fun onEnterPressed(endText: CharSequence) {
@@ -221,7 +236,6 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
             }
         }))
         */
-    }
 
 
     private fun addViewBelowFocus(view: View) {
@@ -258,50 +272,36 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         }
     }
 
-    private fun parseToJson() {
-/*
-        val blocs = arrayListOf<Bloc>()
-
-        for (i in 0 until layout.childCount) {
-            val bloc = layout.getChildAt(i)
-            if (bloc is TextBlocWidget) {
-                blocs.add(TextBloc(bloc.text.toString()))
-            } else if (bloc is ImageView) {
-                blocs.add(ImageBloc())
-            }
-            
-            blocs.add(ImageBloc())
-        }
-
-        val textView = TextView(this)
-        textView.text = JsonParser().parseToJson(blocs)
-
-        layout.removeAllViews()
-        layout.addView(textView)
-
- */
+    //--------------------------------------------------------------------------------------------//
+    //                                      I M A G E S
+    //--------------------------------------------------------------------------------------------//
+    private fun selectCoverPicture() {
+       checkStoragePermission()
     }
 
-    private fun parseToBlocs() {
-        /*
+    private fun launchGalleryIntent() {
+        //val getIntent = Intent(Intent.ACTION_GET_CONTENT)
+        //getIntent.type = "image/*"
 
-        val json = (layout.getChildAt(0) as TextView).text.toString()
-        layout.removeAllViews()
-        //val blocs = JsonParser().parseToBlocs(json)
-        val blocs = JsonParser().deserializeBlocs(json)
-        for (bloc in blocs) {
-            if (bloc is TextBloc) {
-                val editText = TextBlocWidget(this)
-                editText.setText(bloc.text)
-                layout.addView(editText)
-            } else if (bloc is ImageBloc) {
-                val imageView = ImageView(this)
-                imageView.background = getDrawable(bloc.resId)
-                layout.addView(imageView)
-            }
+        val pickIntent = Intent(
+            Intent.ACTION_PICK,
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        )
+        pickIntent.type = "image/*"
+        startActivityForResult(pickIntent, GALLERY_RQ)
 
+        //val chooserIntent = Intent.createChooser(getIntent, "Select Image")
+        //chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
+
+        //startActivityForResult(chooserIntent, GALLERY_RQ)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (data != null && resultCode == Activity.RESULT_OK && requestCode == GALLERY_RQ) {
+            viewModel.setPictureAsCover(data)
         }
-         */
     }
 
     //--------------------------------------------------------------------------------------------//
@@ -312,24 +312,60 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         return super.onCreateOptionsMenu(menu)
     }
 
+    //DEBUG
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.menu_item_json_writing -> {
+
+                /*
                 isJson = if (isJson) {
                     val json = (layout.getChildAt(0) as TextView).text.toString()
-                    viewModel.readAndExposeJson(json)
+                    //viewModel
                     false
                 } else {
-                    viewModel.showJson(layout)
+                    //viewModel.showJson(layout)
                     true
                 }
                 Toast.makeText(this, "JSON", Toast.LENGTH_SHORT).show()
+
+                 */
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
+    //--------------------------------------------------------------------------------------------//
+    //                                   P E R M I S S I O N
+    //--------------------------------------------------------------------------------------------//
 
+    private fun checkStoragePermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+            //Not granted yet
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                READ_PERMISSION_RQ)
+        } else {
+            //OK
+            launchGalleryIntent()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            READ_PERMISSION_RQ -> {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    //Not granted
+                } else {
+                    launchGalleryIntent()
+                }
+            }
+        }
+    }
+
+
+    //--------------------------------------------------------------------------------------------//
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         Toast.makeText(applicationContext, "DOWN", Toast.LENGTH_SHORT).show()
@@ -337,14 +373,15 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     }
 
 
-    //--------------------------------------------------------------------------------------------//
     override fun onStop() {
-        viewModel.saveDraft(layout)
+        viewModel.saveDraft(layout, titleView.text.toString())
         super.onStop()
     }
 
     companion object {
         const val DRAFT_ID_KEY = "draft_id_key"
+        const val GALLERY_RQ = 11
+        const val READ_PERMISSION_RQ = 12
 
         fun newIntent(context: Context, draftId: Int = -1): Intent {
             val intent =  Intent(context, EditorActivity::class.java)

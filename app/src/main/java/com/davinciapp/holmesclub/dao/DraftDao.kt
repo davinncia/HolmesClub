@@ -10,18 +10,31 @@ import com.davinciapp.holmesclub.drafts.model.Draft
 @Dao
 interface DraftDao {
 
+    //READ
     @Query("SELECT * FROM draft")
     fun getAll(): LiveData<List<Draft>>
 
     @Query("SELECT * FROM draft WHERE id = :id")
     suspend fun get(id: Int): Draft
 
+    //INSERT
     @Insert
-    suspend fun insert(draft: Draft)
+    suspend fun insert(draft: Draft): Long
 
+    //UPDATE
     @Update
     suspend fun update(draft: Draft)
 
+    @Query("UPDATE draft SET picture_uri = :uri WHERE id = :id")
+    suspend fun updateCoverPictureUri(id: Int, uri: String)
+
+    @Query("""
+        UPDATE draft 
+        SET title = :title, content = :content, modif_time = :time 
+        WHERE id = :id""")
+    suspend fun updateDraftContent(id: Int, title: String, content: String, time: Long)
+
+    //DELETE
     @Query("DELETE FROM draft WHERE id = :draftId")
     suspend fun delete(draftId: Int)
 }

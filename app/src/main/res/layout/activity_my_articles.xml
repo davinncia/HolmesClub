@@ -19,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!--
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/view_pager_tab_articles"
                 android:layout_width="match_parent"
@@ -26,6 +27,7 @@
                 android:background="@color/colorAccent"
                 app:tabGravity="fill"
                 app:tabMode="fixed" />
+                -->
 
         </androidx.viewpager.widget.ViewPager>
     </LinearLayout>

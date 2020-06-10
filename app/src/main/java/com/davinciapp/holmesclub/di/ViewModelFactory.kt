@@ -16,7 +16,7 @@ class ViewModelFactory private constructor(private val application: Application)
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
             modelClass.isAssignableFrom(EditorViewModel::class.java) -> {
-                EditorViewModel(JsonParser(), draftRepo) as T
+                EditorViewModel(application, JsonParser(), draftRepo) as T
             }
             modelClass.isAssignableFrom(DraftViewModel::class.java) -> {
                 DraftViewModel(draftRepo) as T

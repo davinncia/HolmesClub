@@ -1,14 +1,19 @@
 package com.davinciapp.holmesclub.drafts
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.davinciapp.holmesclub.R
 
-class SwipeToDeleteCallback(private val adapter: DraftAdapter) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+class SwipeToDeleteCallback(private val adapter: DraftAdapter, context: Context) : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
 
+    private val backgroundCornerOffset = 20
     private val background = ColorDrawable(Color.RED)
+    private val icon = ContextCompat.getDrawable(context, R.drawable.ic_clear)
 
     override fun onMove(
         recyclerView: RecyclerView,
@@ -32,8 +37,13 @@ class SwipeToDeleteCallback(private val adapter: DraftAdapter) : ItemTouchHelper
         isCurrentlyActive: Boolean
     ) {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+
         val itemView = viewHolder.itemView
-        val backgroundCornerOffset = 20
+
+        val iconMargin = (itemView.height - icon!!.intrinsicHeight) / 2
+        val iconTop =
+            itemView.top + (itemView.height - icon.intrinsicHeight) / 2
+        val iconBottom = iconTop + icon.intrinsicHeight
 
         when {
             dX > 0 -> { // Swiping to the right
@@ -44,6 +54,10 @@ class SwipeToDeleteCallback(private val adapter: DraftAdapter) : ItemTouchHelper
                 )
             }
             dX < 0 -> { // Swiping to the left
+                val iconLeft: Int = itemView.right - iconMargin - icon.intrinsicWidth
+                val iconRight: Int = itemView.right - iconMargin
+                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom)
+
                 background.setBounds(
                     itemView.right + dX.toInt() - backgroundCornerOffset,
                     itemView.top, itemView.right, itemView.bottom
@@ -54,5 +68,6 @@ class SwipeToDeleteCallback(private val adapter: DraftAdapter) : ItemTouchHelper
             }
         }
         background.draw(c)
+        icon.draw(c)
     }
 }

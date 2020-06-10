@@ -65,7 +65,7 @@ class DraftListFragment : Fragment() {
             this.adapter = adapter
             this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             //Swipe to delete function
-            ItemTouchHelper(SwipeToDeleteCallback(adapter)).attachToRecyclerView(this)
+            ItemTouchHelper(SwipeToDeleteCallback(adapter, requireContext())).attachToRecyclerView(this)
         }
 
     }
