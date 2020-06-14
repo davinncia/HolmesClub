@@ -14,7 +14,7 @@ data class WritingStyle(
     val backgroundRes: Int = 0){
 
     enum class Styles {
-        MEDIUM, SMALL, BIG, QUOTE
+        MEDIUM, SMALL, QUOTE
     }
 }
 

@@ -3,9 +3,6 @@ package com.davinciapp.holmesclub.editor.widgets
 import android.content.Context
 import android.graphics.PorterDuff
 import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ImageSpan
 import androidx.core.content.res.ResourcesCompat
 import com.davinciapp.holmesclub.R
 import com.davinciapp.holmesclub.model.WritingStyle
@@ -65,15 +62,14 @@ class TextBlocWidget(context: Context) : androidx.appcompat.widget.AppCompatEdit
             when (styleType) {
                 Styles.SMALL -> {
                     textStyle = Styles.SMALL
-                    WritingStyle(16F)
-                }
-                Styles.BIG -> {
-                    textStyle = Styles.BIG
                     WritingStyle(
-                        24F,
-                        paddingBottom = 16,
+                        15F,
                         typeFace = Typeface.BOLD
                     )
+                }
+                Styles.MEDIUM -> {
+                    textStyle = Styles.MEDIUM
+                    WritingStyle()
                 }
                 Styles.QUOTE -> {
                     textStyle = Styles.QUOTE
@@ -85,10 +81,7 @@ class TextBlocWidget(context: Context) : androidx.appcompat.widget.AppCompatEdit
                         backgroundRes = R.drawable.background_quote
                     )
                 }
-                else -> {
-                    textStyle = Styles.MEDIUM
-                    WritingStyle()
-                }
+
             }
 
         this.textSize = writingStyle.size
@@ -98,18 +91,6 @@ class TextBlocWidget(context: Context) : androidx.appcompat.widget.AppCompatEdit
         this.setBackgroundResource(writingStyle.backgroundRes)
     }
 
-
-    //Always starts with an invisible space -> help us know when to delete the edit text
-    private fun placeBeginIndicator() {
-        val string = SpannableString(" ")
-        string.setSpan(
-            ImageSpan(context, android.R.drawable.divider_horizontal_dark),
-            0,
-            1,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        this.setText(string)
-    }
 
     interface SpecialKeyPressed {
         fun onEnterPressed(endText: CharSequence)

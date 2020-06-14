@@ -22,8 +22,8 @@ class DraftRepository(context: Context) {
 
     suspend fun update(draft: Draft) = draftDao.update(draft)
     suspend fun updateCoverPictureUri(id: Int, uri: String) = draftDao.updateCoverPictureUri(id, uri)
-    suspend fun updateDraftContent(id: Int, title: String, content: String, currentTime: Long) =
-        draftDao.updateDraftContent(id, title, content, currentTime)
+    suspend fun updateDraftContent(id: Int, title: String, content: String, words: Int, currentTime: Long) =
+        draftDao.updateDraftContent(id, title, content, words, currentTime)
 
     suspend fun delete(draftId: Int) =
         draftDao.delete(draftId)

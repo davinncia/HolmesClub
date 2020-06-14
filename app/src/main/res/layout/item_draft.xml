@@ -10,9 +10,9 @@
 
 
     <ImageView
-        android:id="@+id/iv_article_item"
+        android:id="@+id/iv_article_draft_item"
         android:layout_width="@dimen/image_list_item_width"
-        android:layout_height="match_parent"
+        android:layout_height="@dimen/image_list_item_width"
         android:src="@drawable/ic_feather"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,18 +20,29 @@
 
 
     <TextView
-        android:id="@+id/tv_title_article_item"
+        android:id="@+id/tv_title_article_draft_item"
         style="@style/ItemTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:maxLines="2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_article_item"
+        app:layout_constraintStart_toEndOf="@+id/iv_article_draft_item"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Title Of the article you see" />
 
     <TextView
-        android:id="@+id/tv_date_article_item"
+        android:id="@+id/tv_words_count_draft_item"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textStyle="italic"
+        style="@style/ItemContent"
+        app:layout_constraintStart_toEndOf="@id/iv_article_draft_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_article_draft_item"
+        tools:text="42 words" />
+
+    <TextView
+        android:id="@+id/tv_date_article_draft_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:maxLines="1"
@@ -39,7 +50,7 @@
         android:textStyle="italic"
         style="@style/ItemContent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title_article_item"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_article_draft_item"
         tools:text="20/06/2020" />
 
 

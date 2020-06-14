@@ -30,9 +30,9 @@ interface DraftDao {
 
     @Query("""
         UPDATE draft 
-        SET title = :title, content = :content, modif_time = :time 
+        SET title = :title, content = :content, words_nbr = :words, modif_time = :time
         WHERE id = :id""")
-    suspend fun updateDraftContent(id: Int, title: String, content: String, time: Long)
+    suspend fun updateDraftContent(id: Int, title: String, content: String, words: Int, time: Long)
 
     //DELETE
     @Query("DELETE FROM draft WHERE id = :draftId")

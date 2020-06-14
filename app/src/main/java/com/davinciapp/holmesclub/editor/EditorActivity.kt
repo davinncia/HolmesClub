@@ -45,24 +45,41 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         val coverImageView = findViewById<ImageView>(R.id.iv_cover_editor)
 
         //CLICKS
-        findViewById<ImageView>(R.id.iv_font_size_editor).setOnClickListener { showFontOptionsPopUp(it) }
-        findViewById<ImageView>(R.id.iv_paragraph_editor).setOnClickListener { showParagraphOptionsPopUp(it) }
+        findViewById<ImageView>(R.id.iv_font_size_editor).setOnClickListener {
+            showFontOptionsPopUp(
+                it
+            )
+        }
+        findViewById<ImageView>(R.id.iv_paragraph_editor).setOnClickListener {
+            showParagraphOptionsPopUp(
+                it
+            )
+        }
         findViewById<ImageView>(R.id.iv_quote_editor).setOnClickListener { setQuoteStyle() }
         findViewById<ImageView>(R.id.iv_separator_editor).setOnClickListener { addSeparator() }
-        findViewById<ImageView>(R.id.iv_image_editor).setOnClickListener { addPictureBloc() }
+        findViewById<ImageView>(R.id.iv_image_editor).setOnClickListener {
+            //selectPicture()
+            //COUNT DEBUG
+            val bloc = currentFocus
+            if (bloc is TextBlocWidget) {
+                val count = viewModel.countWordsNbr(bloc.text.toString())
+                Toast.makeText(this, "$count words", Toast.LENGTH_SHORT).show()
+            }
+        }
         //Cover pic
         findViewById<ImageView>(R.id.iv_choose_cover_picture_editor).setOnClickListener { selectCoverPicture() }
 
         //Getting ViewModel via Factory
         viewModel = ViewModelProvider(
-            this, ViewModelFactory.getInstance(application))[EditorViewModel::class.java]
+            this, ViewModelFactory.getInstance(application)
+        )[EditorViewModel::class.java]
 
         //Sending draft id to vm
         viewModel.getDraft(draftId)
 
         //Listening
         viewModel.draftUi.observe(this, Observer {
-            Glide.with(this).load(Uri.parse(it.coverPictureUri)).into(coverImageView)
+            Glide.with(this).load(Uri.parse(it.coverPictureUri)).centerCrop().into(coverImageView)
             //Glide.with(this).load("android.resource://com.davinciapp.holmesclub/drawable/ic_sherlock").into(coverImageView)
             //Glide.with(this).load(R.drawable.ic_sherlock).into(coverImageView)
             titleView.setText(it.title)
@@ -121,13 +138,18 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         //POP UP WINDOW
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val popView = inflater.inflate(R.layout.popup_window_font, null, false)
-        val popWindow = PopupWindow(popView, LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT, true)
+        val popWindow = PopupWindow(
+            popView,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            true
+        )
 
         popView.findViewById<ImageView>(R.id.iv_font_big_writing).setOnClickListener {
             //BIG
             currentFocus?.let {
                 if (it is TextBlocWidget) {
-                    it.setStyle(WritingStyle.Styles.BIG)
+                    it.setStyle(WritingStyle.Styles.MEDIUM)
                 }
             }
             popWindow.dismiss()
@@ -150,7 +172,12 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
         //POP UP WINDOW
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val popView = inflater.inflate(R.layout.popup_window_paragraph, null, false)
-        val popWindow = PopupWindow(popView, LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT, true)
+        val popWindow = PopupWindow(
+            popView,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            true
+        )
 
         popView.findViewById<ImageView>(R.id.iv_paragraph_add_writing).setOnClickListener {
             //ADD text bloc at next position
@@ -212,10 +239,17 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     }
 
     //PICTURE
-    private fun addPictureBloc() {
+    private fun selectPicture() {
+        if (!hasReadStoragePermission()) askReadStoragePermission()
+        if (hasReadStoragePermission()) launchGalleryIntent(BLOC_PIC_RQ)
+    }
+
+    private fun addPictureBloc(uri: String) {
+
         addViewBelowFocus(
             MyImageBlocWidget(
                 this,
+                uri,
                 this
             )
         )
@@ -225,17 +259,17 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     //                                     U I     A C T I O N
     //--------------------------------------------------------------------------------------------//
 
-        /*, object : TextBloc.SpecialKeyPressed {
-            override fun onEnterPressed(endText: CharSequence) {
-                Toast.makeText(applicationContext, endText, Toast.LENGTH_SHORT).show()
-                addTextBloc()
-            }
+    /*, object : TextBloc.SpecialKeyPressed {
+        override fun onEnterPressed(endText: CharSequence) {
+            Toast.makeText(applicationContext, endText, Toast.LENGTH_SHORT).show()
+            addTextBloc()
+        }
 
-            override fun onReturnPressed(text: CharSequence) {
-                Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
-            }
-        }))
-        */
+        override fun onReturnPressed(text: CharSequence) {
+            Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
+        }
+    }))
+    */
 
 
     private fun addViewBelowFocus(view: View) {
@@ -258,6 +292,7 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
                     layout.addView(
                         MyImageBlocWidget(
                             this,
+                            bloc.uri,
                             this
                         )
                     )
@@ -276,10 +311,11 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     //                                      I M A G E S
     //--------------------------------------------------------------------------------------------//
     private fun selectCoverPicture() {
-       checkStoragePermission()
+        if (!hasReadStoragePermission()) askReadStoragePermission()
+        if (hasReadStoragePermission()) launchGalleryIntent(COVER_PIC_RQ)
     }
 
-    private fun launchGalleryIntent() {
+    private fun launchGalleryIntent(rq: Int) {
         //val getIntent = Intent(Intent.ACTION_GET_CONTENT)
         //getIntent.type = "image/*"
 
@@ -288,7 +324,7 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         )
         pickIntent.type = "image/*"
-        startActivityForResult(pickIntent, GALLERY_RQ)
+        startActivityForResult(pickIntent, rq)
 
         //val chooserIntent = Intent.createChooser(getIntent, "Select Image")
         //chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
@@ -299,8 +335,15 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (data != null && resultCode == Activity.RESULT_OK && requestCode == GALLERY_RQ) {
+        if (data != null && resultCode == Activity.RESULT_OK && requestCode == COVER_PIC_RQ) {
+            //COVER
             viewModel.setPictureAsCover(data)
+        } else if (data != null && resultCode == Activity.RESULT_OK && requestCode == BLOC_PIC_RQ) {
+            data.dataString?.let {
+                //viewModel.figurePictureOrientation(it) //Doesn't yet work
+                //Pic isn't save for now has it already comes from the MediaStore
+                addPictureBloc(it)
+            }
         }
     }
 
@@ -314,8 +357,9 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
 
     //DEBUG
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.menu_item_json_writing -> {
+
 
                 /*
                 isJson = if (isJson) {
@@ -337,19 +381,21 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
     //--------------------------------------------------------------------------------------------//
     //                                   P E R M I S S I O N
     //--------------------------------------------------------------------------------------------//
-
-    private fun checkStoragePermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-            != PackageManager.PERMISSION_GRANTED) {
-            //Not granted yet
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                READ_PERMISSION_RQ)
-        } else {
-            //OK
-            launchGalleryIntent()
-        }
+    private fun hasReadStoragePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
+    private fun askReadStoragePermission() {
+        ActivityCompat.requestPermissions(
+            this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            READ_PERMISSION_RQ
+        )
+    }
+
+    /*
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -358,11 +404,13 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     //Not granted
                 } else {
-                    launchGalleryIntent()
+                    //Granted
                 }
             }
         }
     }
+
+     */
 
 
     //--------------------------------------------------------------------------------------------//
@@ -380,11 +428,12 @@ class EditorActivity : AppCompatActivity(), MyImageBlocWidget.OnClearImageBlocCl
 
     companion object {
         const val DRAFT_ID_KEY = "draft_id_key"
-        const val GALLERY_RQ = 11
-        const val READ_PERMISSION_RQ = 12
+        const val COVER_PIC_RQ = 11
+        const val BLOC_PIC_RQ = 12
+        const val READ_PERMISSION_RQ = 20
 
         fun newIntent(context: Context, draftId: Int = -1): Intent {
-            val intent =  Intent(context, EditorActivity::class.java)
+            val intent = Intent(context, EditorActivity::class.java)
             intent.putExtra(DRAFT_ID_KEY, draftId)
             return intent
         }

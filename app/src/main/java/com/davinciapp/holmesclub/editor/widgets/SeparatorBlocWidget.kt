@@ -1,12 +1,11 @@
 package com.davinciapp.holmesclub.editor.widgets
 
 import android.content.Context
-import android.view.View
 import com.davinciapp.holmesclub.R
 
 class SeparatorBlocWidget(context: Context) : androidx.appcompat.widget.AppCompatImageView(context) {
 
-    val resId = R.drawable.ic_separator_one
+    val resId = R.drawable.divider_one
 
     init {
         this.setImageResource(resId)

@@ -15,7 +15,7 @@ class DraftViewModel(private val draftRepo: DraftRepository) : ViewModel() {
         Transformations.map(draftRepo.getAllDrafts()) { drafts ->
             val items = arrayListOf<DraftListItem>()
             for (draft in drafts) {
-                items.add(DraftListItem(draft.id, draft.title, getDateStr(draft.modifTime)))
+                items.add(DraftListItem(draft.id, draft.title, draft.pictureUri, "${draft.wordsNbr} words", getDateStr(draft.modifTime)))
             }
             return@map items
         }
@@ -39,6 +39,7 @@ class DraftViewModel(private val draftRepo: DraftRepository) : ViewModel() {
         return dateFormat.format(timeStamp)
     }
 
+    data class DraftListItem(val id: Int, val title: String, val pictureCoverUri: String, val wordsNbr: String, val modifTime: String)
+
 }
 
-data class DraftListItem(val id: Int, val title: String, val modifTime: String)

@@ -1,7 +1,5 @@
 package com.davinciapp.holmesclub.model
 
-import com.davinciapp.holmesclub.R
-
 //Parent class precizing type for Json deserialization
 abstract class Bloc{
     var blocType = "Animal"
@@ -25,7 +23,7 @@ data class SeparatorBloc(
 }
 
 data class ImageBloc(
-    val resId: Int = R.drawable.ic_picture
+    val uri: String
 ) : Bloc() {
     init {
         blocType = "Image"

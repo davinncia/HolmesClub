@@ -3,11 +3,14 @@ package com.davinciapp.holmesclub.drafts
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.davinciapp.holmesclub.R
+import com.davinciapp.holmesclub.drafts.DraftViewModel.DraftListItem
 
 class DraftAdapter(private val listener: OnDraftItemClickListener) :
     ListAdapter<DraftListItem, DraftAdapter.DraftViewHolder>(DraftItemDiffCallback()) {
@@ -43,8 +46,10 @@ class DraftAdapter(private val listener: OnDraftItemClickListener) :
 
     inner class DraftViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val titleView = itemView.findViewById<TextView>(R.id.tv_title_article_item)
-        private val modifTime = itemView.findViewById<TextView>(R.id.tv_date_article_item)
+        private val coverView = itemView.findViewById<ImageView>(R.id.iv_article_draft_item)
+        private val titleView = itemView.findViewById<TextView>(R.id.tv_title_article_draft_item)
+        private val wordsView = itemView.findViewById<TextView>(R.id.tv_words_count_draft_item)
+        private val modifTime = itemView.findViewById<TextView>(R.id.tv_date_article_draft_item)
 
         init {
             itemView.setOnClickListener {
@@ -54,7 +59,10 @@ class DraftAdapter(private val listener: OnDraftItemClickListener) :
         }
 
         fun bind(draftItem: DraftListItem) {
+            Glide.with(coverView.context).load(draftItem.pictureCoverUri).centerCrop().into(coverView)
+            //coverView.setImageResource(R.drawable.ic_sherlock)
             titleView.text = draftItem.title
+            wordsView.text = draftItem.wordsNbr
             modifTime.text = draftItem.modifTime
         }
     }

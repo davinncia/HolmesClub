@@ -3,20 +3,21 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white">
 
     <ImageView
         android:id="@+id/iv_font_big_writing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:src="@drawable/ic_font_size"/>
+        android:src="@drawable/ic_font_big"/>
 
     <ImageView
         android:id="@+id/iv_font_small_writing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:src="@drawable/ic_font_size"/>
+        android:src="@drawable/ic_font_small"/>
 
 </LinearLayout>

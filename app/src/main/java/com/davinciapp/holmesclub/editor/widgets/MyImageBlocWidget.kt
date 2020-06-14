@@ -5,9 +5,10 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import com.bumptech.glide.Glide
 import com.davinciapp.holmesclub.R
 
-class MyImageBlocWidget(context: Context, listener: OnClearImageBlocClickListener) : RelativeLayout(context) {
+class MyImageBlocWidget(context: Context, val uri: String, listener: OnClearImageBlocClickListener) : RelativeLayout(context) {
 
     init {
         val imageView = ImageView(context)
@@ -17,7 +18,7 @@ class MyImageBlocWidget(context: Context, listener: OnClearImageBlocClickListene
         val layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             //LinearLayout.LayoutParams.WRAP_CONTENT
-            200
+            resources.getDimension(R.dimen.image_bloc_height).toInt()
         )
         this.layoutParams = layoutParams
 
@@ -42,7 +43,8 @@ class MyImageBlocWidget(context: Context, listener: OnClearImageBlocClickListene
         )
         imageParams.addRule(CENTER_IN_PARENT)
         imageView.layoutParams = imageParams
-        imageView.setImageResource(R.drawable.ic_picture)
+        //imageView.setImageResource(R.drawable.ic_picture)
+        Glide.with(imageView.context).load(uri).centerInside().into(imageView)
         this.addView(imageView)
 
         //Add remove button

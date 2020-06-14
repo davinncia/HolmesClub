@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 data class Draft(
     val title: String,
     val content: String,
+    @ColumnInfo(name = "words_nbr") val wordsNbr: Int,
     @ColumnInfo(name = "modif_time") val modifTime: Long,
     @ColumnInfo(name = "picture_uri") val pictureUri: String
 ) {

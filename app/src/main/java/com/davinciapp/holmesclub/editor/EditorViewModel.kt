@@ -8,6 +8,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,6 +25,7 @@ import com.davinciapp.holmesclub.model.SeparatorBloc
 import com.davinciapp.holmesclub.model.TextBloc
 import com.davinciapp.holmesclub.repository.DraftRepository
 import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,6 +45,7 @@ class EditorViewModel(
 
     //new draft = -1
     private var draftId: Int? = null
+    private var wordsCount = 0
 
     fun getDraft(id: Int) {
         //Getting draft if not already done
@@ -59,7 +63,7 @@ class EditorViewModel(
                 Log.d("debuglog", "New draft !")
                 //New draft -> insert
                 val emptyBlocJson = """[{"style":"MEDIUM","text":"Let's write !","blocType":"Text"}]"""
-                val newDraft = Draft("New draft", emptyBlocJson, System.currentTimeMillis(), "android.resource://com.davinciapp.holmesclub/drawable/ic_sherlock")
+                val newDraft = Draft("New draft", emptyBlocJson, 2, System.currentTimeMillis(), "android.resource://com.davinciapp.holmesclub/drawable/ic_sherlock")
                 viewModelScope.launch {
                     draftId = draftRepo.insert(newDraft).toInt()
                 }
@@ -80,13 +84,15 @@ class EditorViewModel(
 
     private fun convertToJson(layout: LinearLayout): String {
         val blocs = arrayListOf<Bloc>()
+        wordsCount = 0
 
         for (i in 0 until layout.childCount) {
             val bloc = layout.getChildAt(i)
             if (bloc is TextBlocWidget) {
                 blocs.add(TextBloc(bloc.text.toString(), bloc.textStyle))
+                wordsCount += countWordsNbr(bloc.text.toString())
             } else if (bloc is MyImageBlocWidget) {
-                blocs.add(ImageBloc())
+                blocs.add(ImageBloc(bloc.uri))
             } else if (bloc is SeparatorBlocWidget) {
                 blocs.add(SeparatorBloc(bloc.resId))
             }
@@ -118,10 +124,10 @@ class EditorViewModel(
             } else {
 
                 draftId?.let {
-                    //val draft = Draft(title, jsonArticle, System.currentTimeMillis(), "pic")
+                    //val draft = Draft(title, jsonArticle, System.currentTimeMillis(), )
                     //draft.id = it
                     //draftRepo.update(draft)
-                    draftRepo.updateDraftContent(it, title, jsonArticle, System.currentTimeMillis())
+                    draftRepo.updateDraftContent(it, title, jsonArticle, wordsCount, System.currentTimeMillis())
                     Log.d("debuglog", "DRAFT UPDATED")
                 }?: throw IllegalStateException("No draft instance.")
 
@@ -156,6 +162,10 @@ class EditorViewModel(
                 throw IllegalStateException("Draft not recognized")
             } else {
                 draftRepo.updateCoverPictureUri(draftId!!, uri)
+                draftUi.value?.let {
+                    //Alert view
+                    draftUiMutable.value = it.copy(coverPictureUri = uri)
+                }
             }
         }
 
@@ -203,6 +213,20 @@ class EditorViewModel(
     }
 
 
+    fun figurePictureOrientation(uri: String) {
+        var exif: ExifInterface? = null
+        try {
+            exif = ExifInterface(uri) //FILE NOT FOUND EXCEPTION
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        val orientation = exif?.getAttribute(ExifInterface.TAG_ORIENTATION)
+        orientation?.let {
+            Toast.makeText(application, it, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     //--------------------------------------------------------------------------------------------//
     //                                      D E B U G
     //--------------------------------------------------------------------------------------------//
@@ -212,6 +236,12 @@ class EditorViewModel(
         //DEBUG
         testJson.value = jsonArticle
     }
+
+    fun countWordsNbr(str: String): Int {
+        val words = str.trim().split(("\\s|\\n").toRegex()).toTypedArray().filter { it.isNotEmpty() }
+        return words.size
+    }
+
     //--------------------------------------------------------------------------------------------//
     //                                      U I    M O D E L
     //--------------------------------------------------------------------------------------------//

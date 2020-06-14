@@ -88,18 +88,18 @@
         app:layout_constraintTop_toBottomOf="@id/scroll_view_editor">
 
         <ImageView
-            android:id="@+id/iv_font_size_editor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:src="@drawable/ic_font_size" />
-
-        <ImageView
             android:id="@+id/iv_paragraph_editor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:src="@drawable/ic_paragraph" />
+
+        <ImageView
+            android:id="@+id/iv_font_size_editor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:src="@drawable/ic_font_size" />
 
         <ImageView
             android:id="@+id/iv_quote_editor"
@@ -113,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
-            android:src="@drawable/ic_paragraph" />
+            android:src="@drawable/ic_divider" />
 
         <Space
             android:layout_width="0dp"
