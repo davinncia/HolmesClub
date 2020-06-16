@@ -4,9 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.ViewPager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.davinciapp.holmesclub.R
 import com.davinciapp.holmesclub.bind
+import com.davinciapp.holmesclub.di.ViewModelFactory
 import com.davinciapp.holmesclub.editor.EditorActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -17,20 +22,42 @@ class DraftActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_my_articles)
+        setContentView(R.layout.activity_draft)
 
-        //VIEW PAGER
-        val viewPager = findViewById<ViewPager>(R.id.view_pager_articles)
-        val pagerAdapter = DraftPagerAdapter(supportFragmentManager)
-        viewPager.adapter = pagerAdapter
+        //ViewModel
+        val viewModel = ViewModelProvider(this, ViewModelFactory.getInstance(application))[DraftViewModel::class.java]
 
-        //TABS
-        //val tabLayout = findViewById<TabLayout>(R.id.view_pager_tab_articles)
-        //tabLayout.setupWithViewPager(viewPager)
+        //Recycler View
+        val adapter = DraftAdapter(object : DraftAdapter.OnDraftItemClickListener {
+            override fun onDraftItemClicked(draftId: Int) {
+                startActivity(EditorActivity.newIntent(this@DraftActivity, draftId))
+            }
+            override fun onDraftItemSwiped(draftId: Int) {
+                viewModel.removeDraft(draftId)
+            }
+        })
+        initRecyclerView(adapter)
+
+        //Listen
+        viewModel.draftItems.observe(this, Observer {
+            //adapter.populateList(it)
+            adapter.submitList(it)
+        })
 
         fab.setOnClickListener {
             startActivity(EditorActivity.newIntent(this))
         }
+    }
+
+    private fun initRecyclerView(adapter: DraftAdapter) {
+
+        findViewById<RecyclerView>(R.id.recycler_view_draft_list).apply {
+            this.adapter = adapter
+            this.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            //Swipe to delete function
+            ItemTouchHelper(SwipeToDeleteCallback(adapter, this@DraftActivity)).attachToRecyclerView(this)
+        }
+
     }
 
     companion object {

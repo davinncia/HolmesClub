@@ -4,12 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryLight"
-    tools:context=".drafts.DraftListFragment">
+    tools:context=".feed.FeedFragment">
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_article_list"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_feed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </ScrollView>
 
 </FrameLayout>

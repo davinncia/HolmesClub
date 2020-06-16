@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.davinciapp.holmesclub.drafts.DraftViewModel
 import com.davinciapp.holmesclub.editor.EditorViewModel
+import com.davinciapp.holmesclub.feed.FeedViewModel
 import com.davinciapp.holmesclub.json.JsonParser
 import com.davinciapp.holmesclub.repository.DraftRepository
 
@@ -20,6 +21,9 @@ class ViewModelFactory private constructor(private val application: Application)
             }
             modelClass.isAssignableFrom(DraftViewModel::class.java) -> {
                 DraftViewModel(draftRepo) as T
+            }
+            modelClass.isAssignableFrom(FeedViewModel::class.java) -> {
+                FeedViewModel() as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

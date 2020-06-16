@@ -4,5 +4,6 @@
     <dimen name="image_list_item_width">80dp</dimen>
     <dimen name="image_cover_height">300dp</dimen>
     <dimen name="image_bloc_height">200dp</dimen>
+    <dimen name="feed_item_height">300dp</dimen>
 
 </resources>

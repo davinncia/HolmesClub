@@ -1,18 +1,22 @@
-package com.davinciapp.holmesclub.drafts
+package com.davinciapp.holmesclub.feed
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
-class DraftPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class FeedPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     private val pagesNbr = 2
-    private val titles = arrayOf("Drafts", "Published")
+    private val titles = arrayOf("Trending", "In Review")
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> DraftListFragment.newInstance("Draft")
-            else -> DraftListFragment.newInstance("Published")
+            0 -> FeedFragment.newInstance(
+                "trends"
+            )
+            else -> FeedFragment.newInstance(
+                "reviews"
+            )
         }
     }
 
