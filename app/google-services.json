@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "863280907465",
+    "firebase_url": "https://sherlock-5085a.firebaseio.com",
+    "project_id": "sherlock-5085a",
+    "storage_bucket": "sherlock-5085a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863280907465:android:2786b7e902224cdb24b918",
+        "android_client_info": {
+          "package_name": "com.davinciapp.holmesclub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863280907465-6fls87rggtb62bkp1fgrcon4n407fdlr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.davinciapp.holmesclub",
+            "certificate_hash": "54648eb961f499d0f03f4f4243e5be077910966e"
+          }
+        },
+        {
+          "client_id": "863280907465-tnd5l57ta390d6bn8c42au2gqtns03a5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApfqwjOyr52QtjwVZ6Oqbc0NH0mNMx2qU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863280907465-tnd5l57ta390d6bn8c42au2gqtns03a5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_view_article"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".view.article.ArticleActivity">
+
+
+        <!-- C O V E R -->
+        <FrameLayout
+            android:id="@+id/layout_cover_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            >
+
+            <ImageView
+                android:id="@+id/iv_cover_article"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_cover_height"
+                android:src="@color/colorAccent"
+                />
+
+            <EditText
+                android:id="@+id/et_title_article"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ArticleTitle"
+                android:background="@drawable/background_title"
+                android:layout_gravity="bottom"
+                android:text="This is the title of the article"
+                />
+        </FrameLayout>
+
+        <!-- A U T H O R -->
+        <ImageView
+            android:id="@+id/iv_author_article"
+            android:layout_width="@dimen/author_picture_height"
+            android:layout_height="@dimen/author_picture_height"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_sherlock"
+            app:layout_constraintTop_toBottomOf="@id/layout_cover_article"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/tv_author_article"
+            style="@style/ItemContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/iv_author_article"
+            app:layout_constraintBottom_toBottomOf="@id/iv_author_article"
+            app:layout_constraintTop_toTopOf="@id/iv_author_article"
+            android:text="Mike Gyllenhal" />
+
+
+        <!-- T E X T -->
+        <LinearLayout
+            android:id="@+id/linear_layout_blocs_article"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_author_article"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
+

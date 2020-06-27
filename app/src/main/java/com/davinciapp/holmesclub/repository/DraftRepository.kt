@@ -3,7 +3,7 @@ package com.davinciapp.holmesclub.repository
 import android.content.Context
 import com.davinciapp.holmesclub.dao.DraftDao
 import com.davinciapp.holmesclub.db.AppDatabase
-import com.davinciapp.holmesclub.drafts.model.Draft
+import com.davinciapp.holmesclub.view.drafts.model.Draft
 
 class DraftRepository(context: Context) {
 

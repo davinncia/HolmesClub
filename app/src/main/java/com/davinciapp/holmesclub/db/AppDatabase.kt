@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.davinciapp.holmesclub.dao.DraftDao
-import com.davinciapp.holmesclub.drafts.model.Draft
+import com.davinciapp.holmesclub.view.drafts.model.Draft
 
 @Database(entities = arrayOf(Draft::class), version = 1, exportSchema = false)
 public abstract class AppDatabase : RoomDatabase() {

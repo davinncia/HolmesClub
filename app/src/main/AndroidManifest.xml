@@ -3,6 +3,7 @@
     package="com.davinciapp.holmesclub">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -10,10 +11,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".feed.FeedActivity"></activity>
-        <activity android:name=".drafts.DraftActivity" />
+        <activity android:name=".view.profile.ProfileActivity"></activity>
+        <activity android:name=".view.login.EmailActivity" />
+        <activity android:name=".view.login.WelcomeActivity" />
+        <activity android:name=".view.login.LoginActivity" />
+        <activity android:name=".view.article.ArticleActivity" />
+        <activity android:name=".view.feed.FeedActivity" />
+        <activity android:name=".view.drafts.DraftActivity" />
         <activity
-            android:name=".editor.EditorActivity"
+            android:name=".view.editor.EditorActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".MainActivity">
             <intent-filter>

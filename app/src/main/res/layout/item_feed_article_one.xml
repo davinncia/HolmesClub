@@ -19,6 +19,7 @@
         android:id="@+id/tv_title_feed_item"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:maxLines="3"
         style="@style/ItemTitle"
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,6 +32,44 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/tv_rating_feed_item"
+        style="@style/ItemTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_words_feed_item"
+        android:text="****" />
+
+    <TextView
+        android:id="@+id/tv_words_feed_item"
+        style="@style/ItemContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="2 000 words" />
+
+    <ImageView
+        android:id="@+id/iv_author_feed_item"
+        android:layout_width="@dimen/author_picture_height"
+        android:layout_height="@dimen/author_picture_height"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintBottom_toTopOf="@id/tv_rating_feed_item"
+        />
+
+    <TextView
+        android:id="@+id/tv_author_feed_item"
+        style="@style/ItemContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/iv_author_feed_item"
+        app:layout_constraintBottom_toBottomOf="@id/iv_author_feed_item"
+        app:layout_constraintTop_toTopOf="@id/iv_author_feed_item"
+        android:text="Mike Gyllenhal" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

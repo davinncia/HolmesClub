@@ -16,5 +16,23 @@ data class WritingStyle(
     enum class Styles {
         MEDIUM, SMALL, QUOTE
     }
+
+    companion object {
+        //DISPLAY INFO
+        val MEDIUM = WritingStyle()
+        val QUOTE = WritingStyle(
+            18F,
+            paddingStart = 46,
+            typeFace = Typeface.ITALIC,
+            colorRes = R.color.greyDark,
+            backgroundRes = R.drawable.background_quote
+        )
+        val SMALL = WritingStyle(
+            15F,
+            typeFace = Typeface.BOLD
+        )
+    }
 }
+
+
 

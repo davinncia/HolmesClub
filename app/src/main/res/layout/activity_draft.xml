@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context=".drafts.DraftActivity">
+        tools:context="com.davinciapp.holmesclub.view.drafts.DraftActivity">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_draft_list"

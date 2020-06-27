@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryLight"
+    tools:context=".view.login.WelcomeActivity">
+
+    <TextView
+        android:id="@+id/tv_account_creation_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ArticleTitle"
+        android:layout_margin="16dp"
+        android:text="Create account"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/tv_email_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/ItemTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_account_creation_welcome"
+        android:layout_margin="8dp"
+        tools:text="mahelucas6@gmail.com"/>
+
+    <!-- PSEUDO -->
+    <TextView
+        android:id="@+id/tv_pseudo_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="pseudo"
+        app:layout_constraintStart_toStartOf="@id/et_pseudo_welcome"
+        app:layout_constraintBottom_toTopOf="@id/et_pseudo_welcome"
+        />
+
+    <EditText
+        android:id="@+id/et_pseudo_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
+        android:maxLength="20"
+        android:background="@drawable/rectangle_rounded"
+        android:padding="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_email_welcome"
+        app:layout_constraintBottom_toTopOf="@id/et_password_welcome"/>
+
+    <!-- PASSWORD -->
+
+    <TextView
+    android:id="@+id/tv_password_welcome"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="16dp"
+    android:text="password"
+    app:layout_constraintStart_toStartOf="@id/et_password_welcome"
+    app:layout_constraintBottom_toTopOf="@id/et_password_welcome"
+    />
+
+    <EditText
+        android:id="@+id/et_password_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
+        android:maxLength="20"
+        android:background="@drawable/rectangle_rounded"
+        android:padding="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_pseudo_welcome"
+        app:layout_constraintBottom_toTopOf="@id/et_password_confirm_welcome"/>
+
+    <TextView
+        android:id="@+id/tv_password_confirm_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="password"
+        app:layout_constraintStart_toStartOf="@id/et_password_confirm_welcome"
+        app:layout_constraintBottom_toTopOf="@id/et_password_confirm_welcome"
+        />
+
+    <EditText
+        android:id="@+id/et_password_confirm_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
+        android:maxLength="20"
+        android:background="@drawable/rectangle_rounded"
+        android:padding="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_password_welcome"
+        app:layout_constraintBottom_toTopOf="@id/btn_create_account_welcome"/>
+
+    <Button
+        android:id="@+id/btn_create_account_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Count me in !"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_password_confirm_welcome"/>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/progress_circle_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:progressBarStyleLarge"
+        android:layout_marginBottom="80dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
